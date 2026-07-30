@@ -1,4 +1,2 @@
-this is project with 5 member
+this is readme file
 
-
-hi
