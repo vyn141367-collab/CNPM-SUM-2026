@@ -1,1 +1,102 @@
+\chapter{INTRODUCTION} 
 
+\section{Overview}
+\subsection{Project Information }
+\begin{itemize}
+    \item \textbf{Project name:} AI-powered Film Photography Contest Management Platform
+    \item \textbf{Project code:} \textit{[Điền mã đề tài]}
+    \item \textbf{Group name:} \textit{[Điền tên nhóm]}
+    \item \textbf{Software Type:} Web application \& Mobile application
+\end{itemize}
+\subsection{Project Team}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Full Name} & \textbf{Role} & \textbf{Email} & \textbf{Mobile} \\ \hline
+\textit{Nguyễn Văn Chiến} & Supervisor & & \\ \hline
+\textit{Nguyễn Mai Tường Vy} & Leader & & \\ \hline
+\textit{Phan Huỳnh Trúc Loan} & Member & & \\ \hline
+\textit{Lê Nguyễn Quyền Linh} & Member & & \\ \hline
+\textit{Nguyễn Tấn Phúc} & Member & & \\ \hline
+\textit{Nguyễn Tấn Tài} & Member & & \\ \hline
+\end{tabular}
+\end{table}
+
+\section{Product Background}
+Film photography has experienced a remarkable revival in recent years, attracting photography clubs, educational institutions, and independent film laboratories. Along with this trend, film photography contests have become increasingly popular. However, most contests are still managed using separate tools such as online forms, spreadsheets, email, cloud storage, and social media. This fragmented approach increases administrative workload, complicates submission verification, and limits long-term management of contest information. Therefore, an AI-powered platform is proposed to support contest planning, participant registration, photograph submission, judging, result publication, and digital archiving in a centralized system.
+
+\section{Existing Systems}
+\subsection{Traditional Spreadsheets \& Manual Tools}
+\textbf{Description:} Currently, many film photography contests are managed using separate tools such as online forms, spreadsheets, email, cloud storage, and social media.
+\begin{itemize}
+    \item \textbf{Drawbacks:}
+    \begin{itemize}
+        \item Fragmented approach increases administrative workload.
+        \item Submission verification and metadata tracking are difficult and error-prone.
+        \item Complicates the judging process and lacks a centralized platform for participants to manage contest history.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Generic Digital Photography Contest Platforms}
+\textbf{Description:} Online platforms designed for digital photo contests (e.g., ViewBug, Gurushots, EntryThingy).
+\begin{itemize}
+    \item \textbf{Drawbacks:}
+    \begin{itemize}
+        \item Do not support film-specific metadata (lab development, scanning info, film rolls/frames, negative proof).
+        \item Lack specialized judging criteria for analog photography (film grain, tonal range, scan quality).
+        \item Lack integrated AI tools specifically tuned for film authenticity verification and duplicate image detection.
+    \end{itemize}
+\end{itemize}
+
+\section{Business Opportunity}
+Developing a dedicated management platform for film photography contests digitalizes contest operations, improves management efficiency, standardizes evaluation activities, and establishes a centralized archive of film photography works for future exhibitions, education, and community development.
+
+\section{Software Product Vision}
+To build an end-to-end web and mobile ecosystem tailored specifically for analog photography contests. The platform seamlessly integrates AI assistance, comprehensive metadata tracking, dedicated judging environments, and a long-term digital archive for film photography culture.
+
+\section{Project Scope \& Limitations}
+\subsection{Major Features}
+\subsubsection{Major Features for Admin}
+\begin{itemize}
+    \item \textbf{FE-01:} Login/Logout
+    \item \textbf{FE-02:} Manage user accounts and access permissions
+    \item \textbf{FE-03:} Configure system settings and master data
+    \item \textbf{FE-04:} Monitor overall platform activities and contest configurations
+\end{itemize}
+
+\subsubsection{Major Features for Contest Organizer}
+\begin{itemize}
+    \item \textbf{FE-01:} Login/Logout
+    \item \textbf{FE-02:} Create and configure photography contests (themes, categories, timelines, rules, award structures)
+    \item \textbf{FE-03:} Define custom judging criteria specifically for film photography
+    \item \textbf{FE-04:} Manage participant registrations and verify submissions
+    \item \textbf{FE-05:} Assign judges to categories or specific evaluation rounds
+    \item \textbf{FE-06:} Utilize AI tools for duplicate detection, AI-generated image detection, and automatic categorization
+    \item \textbf{FE-07:} Publish official contest results, produce statistical analytics, and manage digital exhibitions
+\end{itemize}
+
+\subsubsection{Major Features for Judge}
+\begin{itemize}
+    \item \textbf{FE-01:} Login/Logout
+    \item \textbf{FE-02:} Review assigned submissions and view technical film metadata
+    \item \textbf{FE-03:} Evaluate photographs using configurable criteria (composition, film grain, tonal range, scan quality)
+    \item \textbf{FE-04:} Provide detailed comments, scores, and participate in multiple judging rounds
+    \item \textbf{FE-05:} Confirm final evaluation results
+\end{itemize}
+
+\subsubsection{Major Features for Participant}
+\begin{itemize}
+    \item \textbf{FE-01:} Account registration and personal profile management
+    \item \textbf{FE-02:} Browse and register for active film photography contests
+    \item \textbf{FE-03:} Submit film photographs along with detailed technical metadata
+    \item \textbf{FE-04:} Manage film roll history, individual frames, and personal contest portfolio
+    \item \textbf{FE-05:} Track submission verification status and receive judging feedback and results
+\end{itemize}
+
+\subsection{Limitations \& Exclusions}
+\begin{itemize}
+    \item \textbf{LI-1: Physical Negative Verification:} The system relies on uploaded digital scans/contact sheets; it does not physically inspect or handle physical film negatives.
+    \item \textbf{LI-2: Automated AI Decision-Making:} AI models assist organizers by flagging suspicious submissions, but final disqualification requires manual organizer review.
+    \item \textbf{LI-3: Lab/Scan Hardware Integration:} The platform does not directly interface with scanning hardware; metadata must be entered by participants.
+\end{itemize}
