@@ -1,7 +1,7 @@
 # Architecture
 
 ```bash
-    ├── frontend                    # 👈 THÊM FRONTEND VÀO ĐÂY (Giao diện Streamlit)
+    ├── frontend                 
 │   ├── user_front.py           # Cổng Thí sinh
 │   ├── jugde_front.py          # Cổng Giám khảo
 │   ├── admin_front.py          # Cổng Quản trị viên
@@ -39,11 +39,4 @@
 └── README.md
 ```
 
-## Domain Layer
 
-## Services Layer
-
-## Infrastructure Layer
-
-## ORM Đã được triển khai trong Flask python 
-Ánh xạ các class python --> Table CSDL 
