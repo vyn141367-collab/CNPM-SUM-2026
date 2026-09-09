@@ -1,0 +1,232 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage{xcolor} % Sửa gói màu xcolor để hỗ trợ gray!10
+\usepackage{hyperref}
+
+% Cấu hình hiển thị code PlantUML mịn, nền xám nhạt chuẩn
+\lstset{
+    basicstyle=\small\ttfamily,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10}, % Màu nền xám nhạt
+    keywordstyle=\color{blue},       % Từ khóa màu xanh
+    commentstyle=\color{gray},       % Comment màu xám
+    stringstyle=\color{purple},      % Chuỗi ký tự màu tím
+    showstringspaces=false,
+    keepspaces=true
+}
+
+\title{\textbf{Software Requirements Specification}\\ \large AI-powered Film Photography Contest Platform}
+\author{Development Team}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{User Requirements}
+
+\subsection{Actors}
+
+\begin{table}[h!]
+\centering
+\caption{System Actors and Descriptions}
+\label{tab:actors}
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Actor} & \textbf{Description} \\
+\midrule
+\textbf{Participant} & Users of the platform who create accounts, register film roll technical specs, upload digitized frames, and submit photos to participate in contests. \\
+\textbf{Organizer} & Entities or individuals hosting contests. Responsible for creating contests, configuring scoring criteria, assigning Judges, and manually reviewing submissions flagged by the AI. \\
+\textbf{Judge} & Photography experts assigned by the Organizer to anonymously evaluate and score submissions based on configured criteria. \\
+\textbf{Admin} & System administrator managing master data, approving Organizer accounts, configuring roles/permissions, and overseeing platform operations. \\
+\textbf{AI System} & An automated background service actor that scans submissions to detect duplicate images, identify AI-generated content (e.g., Midjourney/DALL-E), and assign classification tags. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Use Cases}
+
+\subsubsection{Diagram(s)}
+
+The PlantUML source code below defines the Use Case Diagram for the platform:
+
+\begin{lstlisting}[caption={Use Case Diagram Source Code (PlantUML)}]
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Participant" as part
+actor "Organizer" as org
+actor "Judge" as judge
+actor "Admin" as admin
+actor "AI System" as ai <<System>>
+
+rectangle "Film Contest Platform" {
+  usecase "Account Management (Auth)" as UC1
+  usecase "Film Roll & Frame Management" as UC2
+  usecase "Photo Submission" as UC3
+  usecase "Validity & Fraud Scan" as UC4
+  usecase "Contest Creation & Configuration" as UC5
+  usecase "Judge Assignment" as UC6
+  usecase "Manual Submission Review" as UC7
+  usecase "Submission Scoring" as UC8
+  usecase "System User Management" as UC9
+}
+
+part --> UC1
+org --> UC1
+judge --> UC1
+admin --> UC1
+
+part --> UC2
+part --> UC3
+UC3 ..> UC4 : <<include>>
+ai --> UC4
+
+org --> UC5
+org --> UC6
+org --> UC7
+
+judge --> UC8
+
+admin --> UC9
+@enduml
+\end{lstlisting}
+
+\subsubsection{Descriptions}
+
+\begin{longtable}{c p{3.2cm} p{3.2cm} p{5.5cm}}
+\caption{Use Case Descriptions Table} \label{tab:usecase_desc} \\
+\toprule
+\textbf{No.} & \textbf{Use Case} & \textbf{Use Case Actors} & \textbf{Use Case Description} \\
+\midrule
+\endhead
+
+\bottomrule
+\endfoot
+
+1 & Account Management (Auth) & Participant, Organizer, Judge, Admin & Allows users to register, log in via JWT, reset passwords, and update profile information. \\ \hline
+2 & Film Roll \& Frame Management & Participant & Enables participants to record film specs (stock, camera, ISO) and upload digitized frames with contact sheets. \\ \hline
+3 & Photo Submission & Participant & Allows participants to select an active contest and submit a frame from an existing film roll. \\ \hline
+4 & Validity \& Fraud Scan & AI System & Automatically triggered upon submission to analyze image similarity, calculate AI generation probability, and return a status verdict. \\ \hline
+5 & Contest Creation \& Configuration & Organizer & Enables organizers to set up a contest, define timeline milestones, and configure specific scoring criteria (e.g., Grain, Composition). \\ \hline
+6 & Judge Assignment & Organizer & Enables organizers to assign specific Judge accounts to form the evaluation panel for a contest. \\ \hline
+7 & Manual Submission Review & Organizer & Allows organizers to inspect AI-flagged entries and make final approval or rejection decisions. \\ \hline
+8 & Submission Scoring & Judge & Allows judges to anonymously view submissions, slide scores (1--10) per criterion, and provide feedback. \\ \hline
+9 & System User Management & Admin & Allows administrators to manage accounts, adjust roles, and approve requests to become an Organizer. \\
+\end{longtable}
+
+\newpage
+\section{Functional Requirements}
+
+\subsection{System Functional Overview}
+
+\subsubsection{Screens Flow}
+
+The PlantUML state diagram below illustrates the navigation flow between system screens across different roles:
+
+\begin{lstlisting}[caption={Screens Flow Source Code (PlantUML)}]
+@startuml
+hide empty description
+skinparam state {
+  BackgroundColor White
+}
+
+[*] --> LoginScreen : Open Application
+
+state LoginScreen {
+  [*] --> Authentication
+}
+
+LoginScreen --> AdminDashboard : Role = Admin
+LoginScreen --> OrganizerDashboard : Role = Organizer / Manager
+LoginScreen --> JudgeDashboard : Role = Judge / Lecturer
+LoginScreen --> ParticipantDashboard : Role = Participant / Student
+
+state ParticipantDashboard {
+  [*] --> FilmRollsScreen : Manage Photos
+  FilmRollsScreen --> FramesDetailScreen : Upload & Select Photo
+  ParticipantDashboard --> ActiveContestsScreen : Browse Contests
+  ActiveContestsScreen --> SubmitPhotoScreen : Submit Photo
+}
+
+state OrganizerDashboard {
+  [*] --> ManageContestsScreen : Initialize
+  ManageContestsScreen --> SetupCriteriaScreen : Configure Scoring
+  ManageContestsScreen --> AssignJudgesScreen : Assign
+  OrganizerDashboard --> SubmissionsReviewScreen : Review (AI Alert)
+}
+
+state JudgeDashboard {
+  [*] --> AssignedContestsScreen : Select Contest
+  AssignedContestsScreen --> JudgingPanelScreen : Evaluate
+}
+
+state AdminDashboard {
+  [*] --> UserManagementScreen
+  [*] --> MasterDataScreen
+}
+@enduml
+\end{lstlisting}
+
+\subsubsection{Screen Descriptions}
+
+\begin{longtable}{c p{2.5cm} p{3.2cm} p{6.5cm}}
+\caption{Screen Descriptions Table} \label{tab:screen_desc} \\
+\toprule
+\textbf{No.} & \textbf{Feature} & \textbf{Screen} & \textbf{Description} \\
+\midrule
+\endhead
+
+\bottomrule
+\endfoot
+
+1 & Authentication & Login / Register Screen & User credentials entry, account registration form, and password recovery link. \\ \hline
+2 & Profile Management & User Profile Screen & Displays personal details, avatar image, security settings, and user activity history. \\ \hline
+3 & Film Management & Film Rolls \& Frames Screen & Grid layout displaying film rolls, enabling technical metadata entry and frame image uploads. \\ \hline
+4 & Contest Browsing & Contest Browsing Screen & Cards view displaying active contests, countdown timers, and submission guidelines. \\ \hline
+5 & Submission & Submit Photo Screen & Form to select a frame from an existing film roll, enter title, backstory, and confirm submission. \\ \hline
+6 & Contest Settings & Contest Settings Screen & Organizer dashboard to initialize contests, set dates, and assign criteria weights. \\ \hline
+7 & Verification & Submissions Review Screen & Table view of all submissions with red/yellow indicators highlighting AI-flagged entries. \\ \hline
+8 & Judging & Judging Panel Screen & Dark-mode workspace focused on high-res photos, metadata, and criteria score sliders (1--10). \\ \hline
+9 & Administration & Admin Dashboard Screen & System stats view with account management tables, role assignments, and system metrics. \\
+\end{longtable}
+
+\subsubsection{Screen Authorization}
+
+\begin{table}[h!]
+\centering
+\caption{Screen Authorization Matrix}
+\label{tab:screen_auth}
+\begin{tabularx}{\textwidth}{X c c c c}
+\toprule
+\textbf{Screen} & \textbf{Admin} & \textbf{Manager} & \textbf{Lecturer} & \textbf{Student} \\
+\midrule
+Login / Register Screen & Yes & Yes & Yes & Yes \\
+User Profile Screen & Yes & Yes & Yes & Yes \\
+Admin Dashboard Screen & \textbf{Yes} & No & No & No \\
+User Management Screen & \textbf{Yes} & No & No & No \\
+Contest Settings Screen & View & \textbf{Yes} & No & No \\
+Assign Judges Screen & View & \textbf{Yes} & No & No \\
+Submissions Review Screen & View & \textbf{Yes} & No & No \\
+Judging Panel Screen & No & No & \textbf{Yes} & No \\
+Assigned Contests Screen & No & No & \textbf{Yes} & No \\
+Film Rolls \& Frames Screen & No & No & No & \textbf{Yes} \\
+Contest Browsing Screen & View & View & View & \textbf{Yes} \\
+Submit Photo Screen & No & No & No & \textbf{Yes} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textit{Note: In the context of this domain, Manager corresponds to the Contest Organizer, Lecturer corresponds to the Judge, and Student corresponds to the Participant.}
+
+\end{document}
