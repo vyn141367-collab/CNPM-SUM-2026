@@ -12,6 +12,7 @@ class SubmissionRepository:
     def create_submission(self, data: dict) -> SubmissionModel:
         try:
             new_submission = SubmissionModel(
+                name=data.get('name'),          
                 title=data.get('title'),
                 image_url=data.get('image_url'),
                 film_stock=data.get('film_stock'),
@@ -20,7 +21,9 @@ class SubmissionRepository:
                 iso=data.get('iso'),
                 film_format=data.get('film_format'),
                 developing_lab=data.get('developing_lab'),
-                scanning_specs=data.get('scanning_specs')
+                scanning_specs=data.get('scanning_specs'),
+                score=data.get('score'),         
+                comment=data.get('comment')      
             )
             self.session.add(new_submission)
             self.session.commit()
@@ -45,6 +48,15 @@ class SubmissionRepository:
             if not submission:
                 raise Exception(f"Không tìm thấy bài thi có ID {sub_id}")
 
+            # BỔ SUNG CẬP NHẬT TÊN, ĐIỂM SỐ VÀ NHẬN XÉT
+            if 'name' in data and data['name'] is not None:
+                submission.name = data['name']
+            if 'score' in data and data['score'] is not None:
+                submission.score = data['score']
+            if 'comment' in data and data['comment'] is not None:
+                submission.comment = data['comment']
+
+            # Các trường kỹ thuật cũ
             if 'title' in data and data['title']:
                 submission.title = data['title']
             if 'camera' in data and data['camera']:
