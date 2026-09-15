@@ -1,0 +1,27 @@
+\chapter{UI/UX Design \& User Manual}
+
+\section{UI Design Principles}
+The interfaces are built using Streamlit with a dark theme optimized for viewing photography:
+\begin{itemize}
+    \item \textbf{User Portal:} Single-column form structure with clear upload status and warning indicators.
+    \item \textbf{Judge Portal:} Grid-based layout displaying high-resolution photos alongside metadata cards and score sliders.
+    \item \textbf{Admin Portal:} Dashboard layout with summary metrics and editable data tables.
+\end{itemize}
+
+\section{User Manual}
+
+\subsection{Submitting an Entry (Contestant)}
+\begin{enumerate}
+    \item Open the User Portal in a browser.
+    \item Fill in contestant information (Name, Artwork Title, Film Stock, Camera).
+    \item Click \textbf{Browse files} to select a film photo (PNG, JPG, WEBP).
+    \item Click \textbf{Submit}. Client-side compression executes automatically before sending data to the server.
+\end{enumerate}
+
+\subsection{Grading Entries (Judge)}
+\begin{enumerate}
+    \item Open the Judge Portal.
+    \item Select an ungraded photo from the list.
+    \item Review image details and EXIF metadata.
+    \item Adjust the score slider (1--10), enter comments, and click \textbf{Save Evaluation}.
+\end{enumerate}
