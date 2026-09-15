@@ -1,5 +1,6 @@
 import os
 import time
+import traceback
 from flask import Blueprint, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 from infrastructure.repositories.submission_repository import SubmissionRepository
@@ -35,6 +36,74 @@ def submit_film():
         data = request.json or {}
 
     data['name'] = data.get('name', '').strip() or 'N/A'
+
+    required_fields = ['image_url', 'film_stock', 'camera', 'film_format']
+    for field in required_fields:
+        if field not in data or not data[field]:
+            return jsonify({"error": f"Thiếu thông tin bắt buộc: {field}"}), 400
+            
+    repo = SubmissionRepository()
+    try:
+        new_sub = repo.create_submission(data)
+        return jsonify({
+            "message": "Nộp bài thành công!", 
+            "submission_id": getattr(new_sub, 'id', None)
+        }), 201
+    except Exception as e:
+        print(f"[ERROR POST /api/submissions]: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@bp.route('', methods=['GET'])
+def get_all_submissions():
+    """API Lấy danh sách tất cả bài thi"""
+    repo = SubmissionRepository()
+    try:
+        subs = repo.get_all()
+        result = []
+        for s in subs:
+            result.append({
+                "id": getattr(s, 'id', None),
+                "name": getattr(s, 'name', 'N/A') or 'N/A',
+                "title": getattr(s, 'title', 'Chưa có tiêu đề') or 'Chưa có tiêu đề',
+                "image_url": getattr(s, 'image_url', ''),
+                "film_stock": getattr(s, 'film_stock', 'N/A'),
+                "camera": getattr(s, 'camera', 'N/A'),
+                "lens": getattr(s, 'lens', 'N/A'),
+                "iso": getattr(s, 'iso', 'N/A'),
+                "film_format": getattr(s, 'film_format', 'N/A'),
+                "developing_lab": getattr(s, 'developing_lab', 'N/A'),
+                "scanning_specs": getattr(s, 'scanning_specs', 'N/A'),
+                "score": getattr(s, 'score', None),
+                "comment": getattr(s, 'comment', '') or ''
+            })
+        return jsonify({"data": result}), 200
+    except Exception as e:
+        print(f"[ERROR GET /api/submissions]: {str(e)}")
+        traceback.print_exc()
+        return jsonify({"error": f"Lỗi máy chủ: {str(e)}", "data": []}), 500
+
+@bp.route('/<sub_id>', methods=['PUT'])
+def update_submission(sub_id):
+    """API Cập nhật thông tin/điểm số bài nộp"""
+    data = request.json or {}
+    repo = SubmissionRepository()
+    try:
+        repo.update_submission(sub_id, data)
+        return jsonify({"message": "Cập nhật thành công!"}), 200
+    except Exception as e:
+        print(f"[ERROR PUT /api/submissions/{sub_id}]: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@bp.route('/<sub_id>', methods=['DELETE'])
+def delete_submission(sub_id):
+    """API Xóa bài nộp"""
+    repo = SubmissionRepository()
+    try:
+        repo.delete_submission(sub_id)
+        return jsonify({"message": "Xóa thành công!"}), 200
+    except Exception as e:
+        print(f"[ERROR DELETE /api/submissions/{sub_id}]: {str(e)}")
+        return jsonify({"error": str(e)}), 500    data['name'] = data.get('name', '').strip() or 'N/A'
 
     required_fields = ['image_url', 'film_stock', 'camera', 'film_format']
     for field in required_fields:
