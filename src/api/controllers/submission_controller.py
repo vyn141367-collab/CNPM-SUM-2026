@@ -12,12 +12,12 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @bp.route('/uploads/<filename>', methods=['GET'])
 def serve_image(filename):
-    """API trả về file ảnh công khai cho Judge và Admin xem"""
+    """API trả về file ảnh công khai"""
     return send_from_directory(UPLOAD_FOLDER, filename)
 
 @bp.route('', methods=['POST'])
 def submit_film():
-    # Xử lý trường hợp nhận tệp ảnh tải lên (multipart/form-data)
+    """API Nộp bài thi mới"""
     if 'file' in request.files:
         file = request.files['file']
         if file.filename == '':
@@ -28,15 +28,14 @@ def submit_film():
         file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
         file.save(file_path)
         
-        # Đường dẫn URL tới ảnh vừa lưu
         image_url = f"http://127.0.0.1:9999/api/submissions/uploads/{unique_filename}"
         data = request.form.to_dict()
         data['image_url'] = image_url
     else:
-        # Xử lý nếu gửi JSON truyền đường dẫn URL cũ
         data = request.json or {}
 
-    # Kiểm tra trường bắt buộc
+    data['name'] = data.get('name', '').strip() or 'N/A'
+
     required_fields = ['image_url', 'film_stock', 'camera', 'film_format']
     for field in required_fields:
         if field not in data or not data[field]:
@@ -54,6 +53,7 @@ def submit_film():
 
 @bp.route('', methods=['GET'])
 def get_all_submissions():
+    """API Lấy danh sách tất cả bài thi"""
     repo = SubmissionRepository()
     subs = repo.get_all()
     
@@ -61,6 +61,7 @@ def get_all_submissions():
     for s in subs:
         result.append({
             "id": s.id,
+            "name": getattr(s, 'name', 'N/A') or 'N/A',
             "title": s.title,
             "image_url": s.image_url,
             "film_stock": s.film_stock,
@@ -69,15 +70,17 @@ def get_all_submissions():
             "iso": s.iso,
             "film_format": s.film_format,
             "developing_lab": s.developing_lab,
-            "scanning_specs": s.scanning_specs
+            "scanning_specs": s.scanning_specs,
+            "score": getattr(s, 'score', None),
+            "comment": getattr(s, 'comment', '')
         })
         
     return jsonify({"data": result}), 200
 
 @bp.route('/<sub_id>', methods=['PUT'])
 def update_submission(sub_id):
-    """API Cập nhật thông tin bài nộp"""
-    data = request.json
+    """API Cập nhật thông tin/điểm số bài nộp"""
+    data = request.json or {}
     repo = SubmissionRepository()
     try:
         repo.update_submission(sub_id, data)
