@@ -1,0 +1,43 @@
+\chapter{API Specification}
+
+\section{Endpoint Summary}
+The Flask API communicates over standard HTTP protocols, accepting form-data and returning JSON payloads.
+
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|l|l|p{6cm}|}
+\hline
+\textbf{HTTP Method} & \textbf{Endpoint Path} & \textbf{Functional Description} \\ \hline
+\texttt{POST} & \texttt{/api/submissions} & Accepts submission metadata and image file. \\ \hline
+\texttt{GET} & \texttt{/api/submissions} & Retrieves all submissions with scores. \\ \hline
+\texttt{PUT} & \texttt{/api/submissions/\{id\}} & Updates score and evaluation notes. \\ \hline
+\texttt{DELETE} & \texttt{/api/submissions/\{id\}} & Deletes an entry from DB and filesystem. \\ \hline
+\end{tabular}
+\caption{API Endpoints Overview}
+\end{table}
+
+\section{Sample Payloads}
+
+\subsection{POST /api/submissions Request}
+Multipart form-data fields:
+\begin{itemize}
+    \item \texttt{name}: "Jane Doe"
+    \item \texttt{title}: "Sunset on Kodak Gold"
+    \item \texttt{film\_stock}: "Kodak Gold 200"
+    \item \texttt{camera}: "Leica M6"
+    \item \texttt{file}: Binary image data (JPEG)
+\end{itemize}
+
+\subsection{Response (201 Created)}
+\begin{verbatim}
+{
+  "status": "success",
+  "message": "Submission created successfully",
+  "data": {
+    "id": 102,
+    "title": "Sunset on Kodak Gold",
+    "image_path": "/uploads/102_sunset.jpg"
+  }
+}
+\end{verbatim}
