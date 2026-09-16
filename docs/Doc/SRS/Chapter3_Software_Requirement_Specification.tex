@@ -1,0 +1,25 @@
+\chapter{Software Requirement Specification}
+
+\section{Actors \& Stakeholders}
+The system defines three major primary actors:
+\begin{itemize}
+    \item \textbf{Contestant (User):} Submits film photography artworks along with technical metadata.
+    \item \textbf{Judge:} Reviews assigned submissions, views detailed image information, and submits scores.
+    \item \textbf{Administrator (Admin):} Oversees the entire system, manages entries, and monitors contest metrics.
+\end{itemize}
+
+\section{Functional Requirements (FR)}
+\begin{itemize}
+    \item \textbf{FR-01 (Submission):} The system shall allow users to upload images (JPG, PNG, WEBP) along with metadata (Name, Title, Film Stock, Camera, Format).
+    \item \textbf{FR-02 (Image Compression):} The system shall compress image files on the client side prior to payload transmission.
+    \item \textbf{FR-03 (Validation):} The system shall validate submitted entries via automated verification rules or external API checks.
+    \item \textbf{FR-04 (Evaluation):} The system shall allow judges to review images and submit ratings (1--10 scale) with comments.
+    \item \textbf{FR-05 (Management):} The system shall provide admins with tools to list, filter, and delete contest entries.
+\end{itemize}
+
+\section{Non-Functional Requirements (NFR)}
+\begin{itemize}
+    \item \textbf{NFR-01 (Performance):} Image submission requests should complete within 3 seconds after client-side compression.
+    \item \textbf{NFR-02 (Usability):} The interface must be intuitive, dark-mode friendly for photography viewing, and accessible without extensive training.
+    \item \textbf{NFR-03 (Reliability):} The backend RESTful API must return appropriate standard HTTP status codes (200, 201, 400, 500).
+\end{itemize}
