@@ -1,0 +1,23 @@
+\chapter{Deployment \& Conclusion}
+
+\section{System Deployment}
+
+\subsection{Prerequisites}
+Python 3.9+ environment with required packages installed via:
+\begin{verbatim}
+pip install -r requirements.txt
+\end{verbatim}
+
+\subsection{Execution Steps}
+\begin{enumerate}
+    \item Start Backend API: \texttt{python src/app.py} (Port 9999).
+    \item Launch Admin Portal: \texttt{streamlit run admin\_front.py --server.port 8501} (Port 8501).
+    \item Launch Judge Portal: \texttt{streamlit run judge\_front.py --server.port 8502} (Port 8502).
+    \item Launch User Portal: \texttt{streamlit run user\_front.py --server.port 8503} (Port 8503).
+\end{enumerate}
+
+\section{Conclusion \& Future Work}
+\begin{itemize}
+    \item \textbf{Conclusion:} The system successfully digitalizes film photography submission and judging workflows. Client-side compression effectively eliminates network timeouts caused by large photo files.
+    \item \textbf{Future Work:} Implement JWT user authentication, deploy cloud storage for uploaded assets (e.g., AWS S3), and train a custom vision model for automated film border detection.
+\end{itemize}
