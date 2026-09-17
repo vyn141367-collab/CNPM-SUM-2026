@@ -181,7 +181,6 @@ The SQLite database consists of three main entities: \texttt{USERS}, \texttt{SUB
     \nodepart{second}
     \underline{id} (PK) : INTEGER \\
     name : VARCHAR(100) \\
-    email : VARCHAR(100) \\
     role : VARCHAR(20)
 };
 
@@ -189,15 +188,13 @@ The SQLite database consists of three main entities: \texttt{USERS}, \texttt{SUB
 \node[table, right=2.5cm of users] (submissions) {
     \textbf{SUBMISSIONS}
     \nodepart{second}
-    \underline{id} (PK) : INTEGER \\
-    user\_id (FK) : INTEGER \\
+    \underline{user\_id (FK) : INTEGER} \\
     title : VARCHAR(150) \\
     film\_stock : VARCHAR(50) \\
     camera : VARCHAR(50) \\
     format : VARCHAR(20) \\
     image\_path : VARCHAR(255) \\
     status : VARCHAR(20) \\
-    created\_at : DATETIME
 };
 
 % EVALUATIONS Table
@@ -205,9 +202,7 @@ The SQLite database consists of three main entities: \texttt{USERS}, \texttt{SUB
     \textbf{EVALUATIONS}
     \nodepart{second}
     \underline{id} (PK) : INTEGER \\
-    submission\_id (FK) : INTEGER \\
-    judge\_id (FK) : INTEGER \\
-    score : FLOAT (1--10) \\
+    score : INTERGER (1--10) \\
     feedback : TEXT \\
     created\_at : DATETIME
 };
