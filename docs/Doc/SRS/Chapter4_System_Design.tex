@@ -181,3 +181,70 @@ The SQLite database consists of three main entities: \texttt{USERS}, \texttt{SUB
 \caption{Entity-Relationship Diagram (Database Relational Schema)}
 \label{fig:erd_detailed}
 \end{figure}
+\section{Use Case Diagram}
+The Use Case Diagram defines the system boundaries and specifies the interactions between the primary actors (\textbf{Contestant}, \textbf{Judge}, and \textbf{Admin}) and the core application features.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    actor/.style={draw, circle, minimum size=0.5cm, fill=gray!10},
+    usecase/.style={draw=blue!80!black, ellipse, fill=blue!5, minimum width=3.4cm, minimum height=0.9cm, align=center, font=\sffamily\small},
+    system/.style={draw=black!70, rounded corners=3pt, thick, inner sep=0.5cm}
+]
+
+% System Boundary Box
+\node[draw, rectangle, rounded corners, minimum width=8.2cm, minimum height=9.8cm, label=above:{\sffamily\bfseries Film Photography Contest System}] (sys) at (4, -3.8) {};
+
+% --- ACTORS ---
+% Contestant (Left)
+\node[actor] (c_head) at (-1.5, -1.2) {};
+\draw[thick] (c_head.south) -- ++(0, -0.6) coordinate (c_body);
+\draw[thick] (c_body) -- ++(-0.3, -0.5);
+\draw[thick] (c_body) -- ++(0.3, -0.5);
+\draw[thick] ($(c_head.south) + (0, -0.2)$) -- ++(-0.4, -0.2);
+\draw[thick] ($(c_head.south) + (0, -0.2)$) -- ++(0.4, -0.2);
+\node[below=1.2cm of c_head, font=\sffamily\bfseries\small] (contestant) {Contestant};
+
+% Judge (Right Top)
+\node[actor] (j_head) at (9.5, -1.2) {};
+\draw[thick] (j_head.south) -- ++(0, -0.6) coordinate (j_body);
+\draw[thick] (j_body) -- ++(-0.3, -0.5);
+\draw[thick] (j_body) -- ++(0.3, -0.5);
+\draw[thick] ($(j_head.south) + (0, -0.2)$) -- ++(-0.4, -0.2);
+\draw[thick] ($(j_head.south) + (0, -0.2)$) -- ++(0.4, -0.2);
+\node[below=1.2cm of j_head, font=\sffamily\bfseries\small] (judge) {Judge};
+
+% Admin (Right Bottom)
+\node[actor] (a_head) at (9.5, -6.0) {};
+\draw[thick] (a_head.south) -- ++(0, -0.6) coordinate (a_body);
+\draw[thick] (a_body) -- ++(-0.3, -0.5);
+\draw[thick] (a_body) -- ++(0.3, -0.5);
+\draw[thick] ($(a_head.south) + (0, -0.2)$) -- ++(-0.4, -0.2);
+\draw[thick] ($(a_head.south) + (0, -0.2)$) -- ++(0.4, -0.2);
+\node[below=1.2cm of a_head, font=\sffamily\bfseries\small] (admin) {Admin};
+
+% --- USE CASES ---
+\node[usecase] (uc1) at (4, -0.5) {Submit Artwork \&\\ Technical Metadata};
+\node[usecase] (uc2) at (4, -2.1) {View Submission\\ Details};
+\node[usecase] (uc3) at (4, -3.7) {Evaluate Entry \&\\ Submit Score};
+\node[usecase] (uc4) at (4, -5.3) {Manage Submissions\\ \& Delete Entries};
+\node[usecase] (uc5) at (4, -6.9) {View Final Results\\ \& Statistics};
+
+% --- CONNECTIONS ---
+% Contestant Connections
+\draw[thick, black!80] (contestant) -- (uc1);
+\draw[thick, black!80] (contestant) -- (uc2);
+
+% Judge Connections
+\draw[thick, black!80] (judge) -- (uc2);
+\draw[thick, black!80] (judge) -- (uc3);
+
+% Admin Connections
+\draw[thick, black!80] (admin) -- (uc2);
+\draw[thick, black!80] (admin) -- (uc4);
+\draw[thick, black!80] (admin) -- (uc5);
+
+\end{tikzpicture}
+\caption{System Use Case Diagram}
+\label{fig:usecase_diagram}
+\end{figure}
