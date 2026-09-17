@@ -45,142 +45,6 @@ The system adopts a decoupled Client-Server architecture. The Presentation Layer
 \label{fig:sys_arch}
 \end{figure}
 
-\section{Database Design (Entity-Relationship Diagram)}
-The relational schema comprises three main entities: \texttt{USERS}, \texttt{SUBMISSIONS}, and \texttt{EVALUATIONS}.
-
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[
-    entity/.style={rectangle, draw=black, fill=gray!10, thick, minimum width=2.8cm, minimum height=1.2cm, align=center, font=\sffamily\bfseries},
-    relationship/.style={diamond, draw=black, fill=yellow!10, thick, aspect=1.5, minimum width=2cm, align=center, font=\sffamily\small},
-    line/.style={draw, thick}
-]
-
-% Entities
-\node[entity] (user) {USERS\\{\normalfont\tiny (id, name, email, role)}};
-\node[relationship, right=2.5cm of user] (submits) {Submits};
-\node[entity, right=2.5cm of submits] (submission) {SUBMISSIONS\\{\normalfont\tiny (id, title, image\_path, film\_stock, camera, status)}};
-\node[relationship, below=2cm of submission] (evaluates) {Evaluates};
-\node[entity, left=2.5cm of evaluates] (judge) {JUDGES\\{\normalfont\tiny (id, name, expertise)}};
-
-% Connections
-\path [line] (user) -- node[above] {1} (submits);
-\path [line] (submits) -- node[above] {N} (submission);
-\path [line] (judge) -- node[above] {1} (evaluates);
-\path [line] (evaluates) -- node[right] {N} (submission);
-
-\end{tikzpicture}
-\caption{Entity-Relationship Diagram (ERD)}
-\label{fig:erd}
-\end{figure}
-
-\section{Sequence Diagram: Submission Workflow}
-The sequence below illustrates client-side image compression followed by asynchronous REST interaction with the Flask Backend.
-
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[
-    actor/.style={rectangle, draw, fill=blue!10, minimum width=2cm, minimum height=0.8cm, align=center, font=\sffamily\small},
-    lifeline/.style={draw, dashed, gray},
-    msg/.style={draw, -Latex, thick, font=\sffamily\scriptsize},
-    reply/.style={draw, -Latex, dashed, thick, font=\sffamily\scriptsize}
-]
-
-% Lifeline Headers
-\node[actor] (c) {Contestant};
-\node[actor, right=2cm of c] (fe) {Frontend\\(Streamlit)};
-\node[actor, right=2.5cm of fe] (be) {Backend\\(Flask API)};
-\node[actor, right=2.5cm of be] (db) {Database\\(SQLite)};
-
-% Vertical Lifelines
-\draw[lifeline] (c) -- ++(0,-6.5);
-\draw[lifeline] (fe) -- ++(0,-6.5);
-\draw[lifeline] (be) -- ++(0,-6.5);
-\draw[lifeline] (db) -- ++(0,-6.5);
-
-% Messages
-\draw[msg] ([yshift=-1cm]c.south) -- node[above] {1. Select image \& fill form} ([yshift=-1cm]fe.south);
-\draw[msg] ([yshift=-1.8cm]fe.south) -- node[above] {2. Compress Image (PIL)} ([yshift=-1.8cm]fe.south);
-\draw[msg] ([yshift=-2.6cm]fe.south) -- node[above] {3. POST /api/submissions (FormData)} ([yshift=-2.6cm]be.south);
-
-\draw[msg] ([yshift=-3.4cm]be.south) -- node[above] {4. Save file to /uploads} ([yshift=-3.4cm]be.south);
-\draw[msg] ([yshift=-4.2cm]be.south) -- node[above] {5. INSERT INTO submissions} ([yshift=-4.2cm]db.south);
-\draw[reply] ([yshift=-5.0cm]db.south) -- node[above] {6. Return DB Record ID} ([yshift=-5.0cm]be.south);
-
-\draw[reply] ([yshift=-5.8cm]be.south) -- node[above] {7. HTTP 201 Created (JSON)} ([yshift=-5.8cm]fe.south);
-\draw[reply] ([yshift=-6.3cm]fe.south) -- node[above] {8. Render Success Balloon UI} ([yshift=-6.3cm]c.south);
-
-\end{tikzpicture}
-\caption{Sequence Diagram for Image Submission}
-\label{fig:seq_diagram}
-\end{figure}
-\section{Database Design (Entity-Relationship Diagram)}
-The SQLite database consists of three main entities: \texttt{USERS}, \texttt{SUBMISSIONS}, and \texttt{EVALUATIONS}. The diagram below illustrates the relational table structures, primary keys (PK), foreign keys (FK), and their cardinality relationships.
-
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[
-    node distance=2.5cm and 2cm,
-    table/.style={
-        rectangle split,
-        rectangle split parts=2,
-        draw=blue!80!black,
-        fill=blue!5,
-        rounded corners=2pt,
-        minimum width=3.5cm,
-        font=\sffamily\small,
-        align=left
-    },
-    tableheader/.style={fill=blue!20, font=\sffamily\bfseries\small},
-    line/.style={draw=black!70, -Latex, thick, font=\sffamily\scriptsize}
-]
-
-% USERS Table
-\node[table] (users) {
-    \textbf{USERS}
-    \nodepart{second}
-    \underline{id} (PK) : INTEGER \\
-    name : VARCHAR(100) \\
-    email : VARCHAR(100) \\
-    role : VARCHAR(20)
-};
-
-% SUBMISSIONS Table
-\node[table, right=2.5cm of users] (submissions) {
-    \textbf{SUBMISSIONS}
-    \nodepart{second}
-    \underline{id} (PK) : INTEGER \\
-    user\_id (FK) : INTEGER \\
-    title : VARCHAR(150) \\
-    film\_stock : VARCHAR(50) \\
-    camera : VARCHAR(50) \\
-    format : VARCHAR(20) \\
-    image\_path : VARCHAR(255) \\
-    status : VARCHAR(20) \\
-    created\_at : DATETIME
-};
-
-% EVALUATIONS Table
-\node[table, below=2cm of submissions] (evaluations) {
-    \textbf{EVALUATIONS}
-    \nodepart{second}
-    \underline{id} (PK) : INTEGER \\
-    submission\_id (FK) : INTEGER \\
-    judge\_id (FK) : INTEGER \\
-    score : FLOAT (1--10) \\
-    feedback : TEXT \\
-    created\_at : DATETIME
-};
-
-% Relationships / Connectors
-\path[line] (users.east) -- node[above] {1 : N (Submits)} (submissions.west);
-\path[line] (submissions.south) -- node[right] {1 : N (Has)} (evaluations.north);
-\path[line] (users.south) |- node[below, near start] {1 : N (Evaluates as Judge)} (evaluations.west);
-
-\end{tikzpicture}
-\caption{Entity-Relationship Diagram (Database Relational Schema)}
-\label{fig:erd_detailed}
-\end{figure}
 \section{Use Case Diagram}
 The Use Case Diagram defines the system boundaries and specifies the interactions between the primary actors (\textbf{Contestant}, \textbf{Judge}, and \textbf{Admin}) and the core application features.
 
@@ -247,4 +111,113 @@ The Use Case Diagram defines the system boundaries and specifies the interaction
 \end{tikzpicture}
 \caption{System Use Case Diagram}
 \label{fig:usecase_diagram}
+\end{figure}
+
+\section{Sequence Diagram: Submission Workflow}
+The sequence below illustrates client-side image compression followed by asynchronous REST interaction with the Flask Backend.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    actor/.style={rectangle, draw, fill=blue!10, minimum width=2cm, minimum height=0.8cm, align=center, font=\sffamily\small},
+    lifeline/.style={draw, dashed, gray},
+    msg/.style={draw, -Latex, thick, font=\sffamily\scriptsize},
+    reply/.style={draw, -Latex, dashed, thick, font=\sffamily\scriptsize}
+]
+
+% Lifeline Headers
+\node[actor] (c) {Contestant};
+\node[actor, right=2cm of c] (fe) {Frontend\\(Streamlit)};
+\node[actor, right=2.5cm of fe] (be) {Backend\\(Flask API)};
+\node[actor, right=2.5cm of be] (db) {Database\\(SQLite)};
+
+% Vertical Lifelines
+\draw[lifeline] (c) -- ++(0,-6.5);
+\draw[lifeline] (fe) -- ++(0,-6.5);
+\draw[lifeline] (be) -- ++(0,-6.5);
+\draw[lifeline] (db) -- ++(0,-6.5);
+
+% Messages
+\draw[msg] ([yshift=-1cm]c.south) -- node[above] {1. Select image \& fill form} ([yshift=-1cm]fe.south);
+\draw[msg] ([yshift=-1.8cm]fe.south) -- node[above] {2. Compress Image (PIL)} ([yshift=-1.8cm]fe.south);
+\draw[msg] ([yshift=-2.6cm]fe.south) -- node[above] {3. POST /api/submissions (FormData)} ([yshift=-2.6cm]be.south);
+
+\draw[msg] ([yshift=-3.4cm]be.south) -- node[above] {4. Save file to /uploads} ([yshift=-3.4cm]be.south);
+\draw[msg] ([yshift=-4.2cm]be.south) -- node[above] {5. INSERT INTO submissions} ([yshift=-4.2cm]db.south);
+\draw[reply] ([yshift=-5.0cm]db.south) -- node[above] {6. Return DB Record ID} ([yshift=-5.0cm]be.south);
+
+\draw[reply] ([yshift=-5.8cm]be.south) -- node[above] {7. HTTP 201 Created (JSON)} ([yshift=-5.8cm]fe.south);
+\draw[reply] ([yshift=-6.3cm]fe.south) -- node[above] {8. Render Success Balloon UI} ([yshift=-6.3cm]c.south);
+
+\end{tikzpicture}
+\caption{Sequence Diagram for Image Submission}
+\label{fig:seq_diagram}
+\end{figure}
+
+\section{Database Design (Entity-Relationship Diagram)}
+The SQLite database consists of three main entities: \texttt{USERS}, \texttt{SUBMISSIONS}, and \texttt{EVALUATIONS}. The diagram below illustrates the relational table structures, primary keys (PK), foreign keys (FK), and their cardinality relationships.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=2.5cm and 2cm,
+    table/.style={
+        rectangle split,
+        rectangle split parts=2,
+        draw=blue!80!black,
+        fill=blue!5,
+        rounded corners=2pt,
+        minimum width=3.5cm,
+        font=\sffamily\small,
+        align=left
+    },
+    tableheader/.style={fill=blue!20, font=\sffamily\bfseries\small},
+    line/.style={draw=black!70, -Latex, thick, font=\sffamily\scriptsize}
+]
+
+% USERS Table
+\node[table] (users) {
+    \textbf{USERS}
+    \nodepart{second}
+    \underline{id} (PK) : INTEGER \\
+    name : VARCHAR(100) \\
+    email : VARCHAR(100) \\
+    role : VARCHAR(20)
+};
+
+% SUBMISSIONS Table
+\node[table, right=2.5cm of users] (submissions) {
+    \textbf{SUBMISSIONS}
+    \nodepart{second}
+    \underline{id} (PK) : INTEGER \\
+    user\_id (FK) : INTEGER \\
+    title : VARCHAR(150) \\
+    film\_stock : VARCHAR(50) \\
+    camera : VARCHAR(50) \\
+    format : VARCHAR(20) \\
+    image\_path : VARCHAR(255) \\
+    status : VARCHAR(20) \\
+    created\_at : DATETIME
+};
+
+% EVALUATIONS Table
+\node[table, below=2cm of submissions] (evaluations) {
+    \textbf{EVALUATIONS}
+    \nodepart{second}
+    \underline{id} (PK) : INTEGER \\
+    submission\_id (FK) : INTEGER \\
+    judge\_id (FK) : INTEGER \\
+    score : FLOAT (1--10) \\
+    feedback : TEXT \\
+    created\_at : DATETIME
+};
+
+% Relationships / Connectors
+\path[line] (users.east) -- node[above] {1 : N (Submits)} (submissions.west);
+\path[line] (submissions.south) -- node[right] {1 : N (Has)} (evaluations.north);
+\path[line] (users.south) |- node[below, near start] {1 : N (Evaluates as Judge)} (evaluations.west);
+
+\end{tikzpicture}
+\caption{Entity-Relationship Diagram (Database Relational Schema)}
+\label{fig:erd_detailed}
 \end{figure}
